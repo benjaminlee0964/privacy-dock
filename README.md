@@ -1,110 +1,163 @@
-# FHEVM Hardhat Template
+# Privacy Dock
 
-A Hardhat-based template for developing Fully Homomorphic Encryption (FHE) enabled Solidity smart contracts using the
-FHEVM protocol by Zama.
+Privacy Dock is a Web3 file registry that keeps file metadata private while proving ownership and persistence on-chain.
+Users select a local file, a mock IPFS upload returns a random IPFS hash, and that hash is encrypted with a locally
+generated EVM address. The encrypted IPFS hash, the encrypted address, and the file name are stored on-chain. When the
+user later chooses to decrypt, the address is decrypted first and then used to decrypt the IPFS hash.
 
-## Quick Start
+This project focuses on privacy-first metadata storage and retrieval using Zama's FHEVM. It avoids mock data in the UI
+and implements the full end-to-end flow required by the product.
 
-For detailed instructions see:
-[FHEVM Hardhat Quick Start Tutorial](https://docs.zama.ai/protocol/solidity-guides/getting-started/quick-start-tutorial)
+## Problem It Solves
+
+Traditional file registries expose file hashes, file names, or access details on-chain. This makes sensitive metadata
+public and permanently indexable. Privacy Dock solves this by:
+- Keeping the IPFS hash encrypted on-chain.
+- Avoiding public exposure of the encryption key material by encrypting the locally generated EVM address.
+- Allowing users to recover the hash only when they explicitly decrypt.
+
+## Advantages
+
+- On-chain persistence of file metadata without exposing the underlying content address.
+- End-to-end encryption flow that never relies on mock data in the UI.
+- Explicit separation of read and write paths (read with viem, write with ethers) for clarity and compatibility.
+- Works on a public testnet, so the flow can be demonstrated without local networks.
+
+## How It Works (End-to-End)
+
+1. User selects a local file.
+2. The app performs a mock IPFS upload and returns a random IPFS hash.
+3. The app generates a random EVM address A locally.
+4. The IPFS hash is encrypted using address A as the key material.
+5. The app encrypts address A using Zama FHEVM tooling.
+6. The file name, encrypted IPFS hash, and encrypted address A are stored on-chain.
+7. The user fetches their file entries from the chain.
+8. On "Decrypt", the app decrypts address A, then uses A to decrypt the IPFS hash.
+
+## Architecture Overview
+
+- Smart Contracts (Hardhat): Store file metadata and encrypted payloads.
+- Frontend (React + Vite): Handles file selection, encryption steps, and user interactions.
+- Zama FHEVM: Provides encrypted data types and decryption workflow.
+- Mock IPFS: Simulates upload and returns a random IPFS hash for the encryption flow.
+
+## Data Stored On-Chain
+
+Each file entry includes:
+- `fileName`: Human-readable name chosen by the user.
+- `encryptedIpfsHash`: The IPFS hash encrypted with locally generated address A.
+- `encryptedAddressA`: The encryption material needed to decrypt the IPFS hash.
+- Additional metadata such as ownership and timestamps may be included depending on contract design.
+
+## Tech Stack
+
+- Smart contracts: Solidity + Hardhat
+- FHE layer: Zama FHEVM
+- Frontend: React + Vite
+- Web3: ethers (writes), viem (reads)
+- Wallet UX: Rainbow
+
+## Repository Layout
+
+```
+contracts/   Solidity contracts
+deploy/      Deployment scripts
+tasks/       Hardhat tasks
+test/        Contract tests
+src/         Frontend source
+docs/        Zama-related documentation
+```
+
+## Local Development
 
 ### Prerequisites
 
-- **Node.js**: Version 20 or higher
-- **npm or yarn/pnpm**: Package manager
+- Node.js 20+
+- npm
+- A Sepolia wallet and RPC access
 
-### Installation
+### Install
 
-1. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-2. **Set up environment variables**
-
-   ```bash
-   npx hardhat vars set MNEMONIC
-
-   # Set your Infura API key for network access
-   npx hardhat vars set INFURA_API_KEY
-
-   # Optional: Set Etherscan API key for contract verification
-   npx hardhat vars set ETHERSCAN_API_KEY
-   ```
-
-3. **Compile and test**
-
-   ```bash
-   npm run compile
-   npm run test
-   ```
-
-4. **Deploy to local network**
-
-   ```bash
-   # Start a local FHEVM-ready node
-   npx hardhat node
-   # Deploy to local network
-   npx hardhat deploy --network localhost
-   ```
-
-5. **Deploy to Sepolia Testnet**
-
-   ```bash
-   # Deploy to Sepolia
-   npx hardhat deploy --network sepolia
-   # Verify contract on Etherscan
-   npx hardhat verify --network sepolia <CONTRACT_ADDRESS>
-   ```
-
-6. **Test on Sepolia Testnet**
-
-   ```bash
-   # Once deployed, you can run a simple test on Sepolia.
-   npx hardhat test --network sepolia
-   ```
-
-## 📁 Project Structure
-
-```
-fhevm-hardhat-template/
-├── contracts/           # Smart contract source files
-│   └── FHECounter.sol   # Example FHE counter contract
-├── deploy/              # Deployment scripts
-├── tasks/               # Hardhat custom tasks
-├── test/                # Test files
-├── hardhat.config.ts    # Hardhat configuration
-└── package.json         # Dependencies and scripts
+```bash
+npm install
 ```
 
-## 📜 Available Scripts
+### Environment
 
-| Script             | Description              |
-| ------------------ | ------------------------ |
-| `npm run compile`  | Compile all contracts    |
-| `npm run test`     | Run all tests            |
-| `npm run coverage` | Generate coverage report |
-| `npm run lint`     | Run linting checks       |
-| `npm run clean`    | Clean build artifacts    |
+Create a `.env` file with:
 
-## 📚 Documentation
+```
+INFURA_API_KEY=your_infura_api_key
+PRIVATE_KEY=your_private_key
+```
 
-- [FHEVM Documentation](https://docs.zama.ai/fhevm)
-- [FHEVM Hardhat Setup Guide](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup)
-- [FHEVM Testing Guide](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat/write_test)
-- [FHEVM Hardhat Plugin](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat)
+Notes:
+- Only `PRIVATE_KEY` is used for deployment. MNEMONIC is not used.
+- The frontend does not use environment variables.
 
-## 📄 License
+### Build and Test
 
-This project is licensed under the BSD-3-Clause-Clear License. See the [LICENSE](LICENSE) file for details.
+```bash
+npm run compile
+npm run test
+```
 
-## 🆘 Support
+### Deploy Locally, Then Sepolia
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/zama-ai/fhevm/issues)
-- **Documentation**: [FHEVM Docs](https://docs.zama.ai)
-- **Community**: [Zama Discord](https://discord.gg/zama)
+1. Start a local Hardhat node:
 
----
+```bash
+npx hardhat node
+```
 
-**Built with ❤️ by the Zama team**
+2. Deploy to local node:
+
+```bash
+npx hardhat deploy --network localhost
+```
+
+3. Deploy to Sepolia (after tasks/tests pass):
+
+```bash
+npx hardhat deploy --network sepolia
+```
+
+## Frontend Usage
+
+1. Connect a wallet on Sepolia.
+2. Select a file.
+3. Upload, encrypt, and store on-chain (no mock UI data; all flows are real).
+4. View your stored file list from the chain.
+5. Click "Decrypt" to recover the IPFS hash.
+
+Notes:
+- The UI does not use `localhost` networks.
+- The UI does not use localStorage.
+- The frontend uses the ABI generated from `deployments/sepolia`.
+
+## Security and Privacy Model
+
+- The IPFS hash is encrypted before storage.
+- The encryption material (address A) is also encrypted.
+- Decryption is user-driven and explicit.
+- Metadata privacy is preserved on-chain; only encrypted blobs are public.
+
+## Limitations
+
+- IPFS uploads are mocked and return a random hash.
+- The system currently stores file metadata, not the file itself.
+- Access sharing and multi-user delegation are not yet implemented.
+
+## Future Plans
+
+- Integrate real IPFS or another content-addressable storage network.
+- Add optional encrypted metadata fields (size, MIME type).
+- Implement sharing with encrypted access control.
+- Improve indexing and search over encrypted metadata.
+- Provide a download flow that resolves the decrypted IPFS hash.
+- Expand test coverage and add audits for FHE-related logic.
+
+## References
+
+- Zama FHEVM documentation: `docs/zama_llm.md`
+- Zama relayer documentation: `docs/zama_doc_relayer.md`
