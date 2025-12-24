@@ -1,0 +1,93 @@
+.ledger-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empty-state {
+  border: 1px dashed rgba(88, 97, 108, 0.35);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.file-card {
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  animation: fadeUp 0.6s ease both;
+}
+
+.file-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.file-header h4 {
+  margin: 0;
+}
+
+.file-meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.file-row code {
+  color: var(--text);
+  background: rgba(29, 35, 42, 0.06);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.file-decrypted {
+  border-top: 1px dashed var(--border);
+  padding-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.primary-button.small {
+  padding: 0.45rem 1.1rem;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 720px) {
+  .file-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .file-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

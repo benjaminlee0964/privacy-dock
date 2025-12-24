@@ -1,0 +1,129 @@
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+  gap: 2rem;
+  align-items: center;
+  animation: fadeUp 0.7s ease both;
+}
+
+.hero-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin: 0 0 0.8rem;
+}
+
+.hero-title {
+  font-size: clamp(2rem, 3vw, 3rem);
+  margin: 0 0 0.6rem;
+}
+
+.hero-subtitle {
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 520px;
+}
+
+.hero-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.address-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.address-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fffdf8;
+  font-size: 0.95rem;
+}
+
+.address-input:focus {
+  outline: 2px solid rgba(42, 127, 127, 0.25);
+  border-color: rgba(42, 127, 127, 0.4);
+}
+
+.address-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.hint {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.hint.good {
+  border-color: rgba(42, 127, 127, 0.4);
+  color: var(--teal);
+}
+
+.hint.warn {
+  border-color: rgba(255, 126, 95, 0.4);
+  color: #c85a40;
+}
+
+.hint.bad {
+  border-color: rgba(205, 75, 75, 0.4);
+  color: #a83b3b;
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.layout-grid > section {
+  animation: fadeUp 0.7s ease both;
+}
+
+.layout-grid > section:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
